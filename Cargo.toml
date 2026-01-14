@@ -14,19 +14,19 @@ resolver = "2"
 [workspace.dependencies]
 prisma-client-rust = { path = "crates/lib" }
 
-diagnostics = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-dmmf = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-prisma-models = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-psl = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-query-core = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-schema-core = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-request-handlers = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
-user-facing-errors = { git = "https://github.com/Brendonovich/prisma-engines", branch = "5.1.0-patched" }
+diagnostics = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+dmmf = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+prisma-models = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+psl = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+query-core = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+schema-core = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+request-handlers = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
+user-facing-errors = { git = "https://github.com/gitarcode/prisma-engines", branch = "5.1.0-patched-lru-update" }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 
-convert_case = "0.6.0"
+convert_case = "0.10.0"
 
 tauri-specta = { version = "2.0.0-rc.9" }
 
