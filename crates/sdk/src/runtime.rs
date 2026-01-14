@@ -10,7 +10,7 @@ use crate::{
     shared_config::{ClientFormat, SharedConfig},
 };
 
-use dmmf::from_precomputed_parts;
+use ::dmmf::from_precomputed_parts;
 use query_core::schema;
 
 use crate::{

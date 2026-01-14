@@ -7,7 +7,7 @@ use psl::{
 };
 use std::collections::HashSet;
 
-use dmmf::{DataModelMetaFormat, DmmfInputField, DmmfInputType, DmmfSchema, TypeLocation};
+use ::dmmf::{DataModelMetaFormat, DmmfInputField, DmmfInputType, DmmfSchema, TypeLocation};
 use proc_macro2::TokenStream;
 
 use crate::{dmmf::EngineDMMF, prelude::*};
