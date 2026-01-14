@@ -1,4 +1,4 @@
-use dmmf::{DmmfTypeReference, TypeLocation};
+use ::dmmf::{DmmfTypeReference, TypeLocation};
 use prisma_models::walkers::{
     CompositeTypeFieldWalker, FieldWalker, ModelWalker, RefinedFieldWalker, ScalarFieldWalker,
 };
