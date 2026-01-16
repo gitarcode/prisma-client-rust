@@ -20,7 +20,7 @@ jobs:
     runs-on: namespace-profile-gitar-macos
     steps:
       - name: Checkout repository
-        uses: namespacelabs/nscloud-checkout-action@v5
+        uses: namespacelabs/nscloud-checkout-action@v8
         with:
           ref: ${{ inputs.tag }}
 
@@ -49,7 +49,7 @@ jobs:
     runs-on: namespace-profile-gitar
     steps:
       - name: Checkout repository
-        uses: namespacelabs/nscloud-checkout-action@v5
+        uses: namespacelabs/nscloud-checkout-action@v8
         with:
           ref: ${{ inputs.tag }}
 
@@ -78,7 +78,7 @@ jobs:
     runs-on: namespace-profile-gitar
     steps:
       - name: Checkout repository
-        uses: namespacelabs/nscloud-checkout-action@v5
+        uses: namespacelabs/nscloud-checkout-action@v8
         with:
           ref: ${{ inputs.tag }}
 
