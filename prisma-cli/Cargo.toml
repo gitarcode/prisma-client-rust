@@ -4,15 +4,14 @@ version = "0.0.0"
 edition = "2021"
 
 [features]
+default = ["postgresql", "mocking", "migrations"]
 sqlite = ["prisma-client-rust-cli/sqlite", "prisma-client-rust-cli/sqlite-create-many"]
 mongodb = ["prisma-client-rust-cli/mongodb"]
 postgresql = ["prisma-client-rust-cli/postgresql"]
 mssql = ["prisma-client-rust-cli/mssql"]
 specta = ["prisma-client-rust-cli/specta"]
 mocking = ["prisma-client-rust-cli/mocking"]
+migrations = ["prisma-client-rust-cli/migrations"]
 
 [dependencies]
-prisma-client-rust-cli = { features = [
-  "migrations",
-  # "mutation-callbacks",
-], default_features = false, path = "../crates/cli" }
+prisma-client-rust-cli = { default-features = false, path = "../crates/cli" }
