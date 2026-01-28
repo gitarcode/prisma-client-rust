@@ -117,6 +117,7 @@ pub type ObjectFields = Vec<(String, PrismaValue)>;
 /// Creates a PrismaValue::Object from a list of key-value pairs.
 /// If a key has multiple values that are PrismaValue::Objects, they will be merged.
 pub fn merge_fields(fields: Vec<(String, PrismaValue)>) -> Vec<(String, PrismaValue)> {
+    todo!();
     let mut merged = HashMap::new();
 
     for el in fields {
