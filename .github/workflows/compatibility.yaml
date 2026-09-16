@@ -28,20 +28,20 @@ jobs:
         with:
           targets: ${{ matrix.target }}
       - uses: goto-bus-stop/setup-zig@v2
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        if: matrix.target != 'aarch64-apple-darwin'
         with:
           version: 0.13.0
       - run: cargo install cargo-zigbuild --locked
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        if: matrix.target != 'aarch64-apple-darwin'
       - uses: Swatinem/rust-cache@v2
         with:
           key: compatibility-${{ matrix.target }}
       - name: Build native binary
-        if: matrix.target != 'aarch64-unknown-linux-gnu'
+        if: matrix.target == 'aarch64-apple-darwin'
         run: cargo build --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}
-      - name: Build ARM Linux binary
-        if: matrix.target == 'aarch64-unknown-linux-gnu'
-        run: cargo zigbuild --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}
+      - name: Build portable Linux binary
+        if: matrix.target != 'aarch64-apple-darwin'
+        run: cargo zigbuild --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}.2.28
       - name: Package binary and source revision
         env:
           TARGET: ${{ matrix.target }}
