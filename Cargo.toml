@@ -100,4 +100,9 @@ dotenv = "0.15.0"
 tokio-postgres = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
 postgres-protocol = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
 postgres-types = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
-postgres-native-tls = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
+
+[patch."https://github.com/Brendonovich/quaint"]
+quaint = { git = "https://github.com/gitarcode/quaint", rev = "ea500bf2cc166b372a4e2e862e00783f283d408b" }
+
+[patch.crates-io]
+tokio-postgres = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
