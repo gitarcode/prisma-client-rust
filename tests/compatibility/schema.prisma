@@ -15,8 +15,9 @@ enum State {
 
 model Item {
   id        String   @id @default(uuid()) @db.Uuid
+  name      String
   state     State    @default(pending)
   labels    String[]
-  metadata  Json
+  metadata  Json     @default("{}")
   createdAt DateTime @default(now())
 }

@@ -462,7 +462,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "117725a109d387c937a1533ce01b450cbde6b88abceea8473c4d7a85853cda3c"
 dependencies = [
  "lazy_static",
- "windows-sys 0.59.0",
+ "windows-sys 0.48.0",
 ]
 
 [[package]]
@@ -1009,7 +1009,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2600,7 +2600,7 @@ version = "0.50.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7957b9740744892f114936ab4a57b3f487491bbeafaf8083688b16841a4240e5"
 dependencies = [
- "windows-sys 0.59.0",
+ "windows-sys 0.61.2",
 ]
 
 [[package]]
@@ -3046,7 +3046,7 @@ checksum = "f6b464fbc74e149a392436b17d523f769e057cb6877f6a5c4618bc6f11800548"
 [[package]]
 name = "postgres-native-tls"
 version = "0.5.3"
-source = "git+https://github.com/gitarcode/rust-postgres?rev=58ed93c82fa95b2dbeca36991313306218641136#58ed93c82fa95b2dbeca36991313306218641136"
+source = "git+https://github.com/gitarcode/rust-postgres?rev=418e011eb5ea53fa2ca8050726df3fb6e224e60d#418e011eb5ea53fa2ca8050726df3fb6e224e60d"
 dependencies = [
  "native-tls",
  "tokio",
@@ -3057,7 +3057,7 @@ dependencies = [
 [[package]]
 name = "postgres-protocol"
 version = "0.6.12"
-source = "git+https://github.com/gitarcode/rust-postgres?rev=58ed93c82fa95b2dbeca36991313306218641136#58ed93c82fa95b2dbeca36991313306218641136"
+source = "git+https://github.com/gitarcode/rust-postgres?rev=418e011eb5ea53fa2ca8050726df3fb6e224e60d#418e011eb5ea53fa2ca8050726df3fb6e224e60d"
 dependencies = [
  "base64 0.22.1",
  "byteorder",
@@ -3074,7 +3074,7 @@ dependencies = [
 [[package]]
 name = "postgres-types"
 version = "0.2.14"
-source = "git+https://github.com/gitarcode/rust-postgres?rev=58ed93c82fa95b2dbeca36991313306218641136#58ed93c82fa95b2dbeca36991313306218641136"
+source = "git+https://github.com/gitarcode/rust-postgres?rev=418e011eb5ea53fa2ca8050726df3fb6e224e60d#418e011eb5ea53fa2ca8050726df3fb6e224e60d"
 dependencies = [
  "bit-vec",
  "bytes",
@@ -3481,7 +3481,7 @@ dependencies = [
  "once_cell",
  "socket2 0.6.5",
  "tracing",
- "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3945,7 +3945,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -4704,10 +4704,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "32497e9a4c7b38532efcdebeef879707aa9f794296a4f0244f6f69e9bc8574bd"
 dependencies = [
  "fastrand",
- "getrandom 0.4.3",
+ "getrandom 0.3.4",
  "once_cell",
  "rustix",
- "windows-sys 0.59.0",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -4896,7 +4896,7 @@ dependencies = [
 [[package]]
 name = "tokio-postgres"
 version = "0.7.18"
-source = "git+https://github.com/gitarcode/rust-postgres?rev=58ed93c82fa95b2dbeca36991313306218641136#58ed93c82fa95b2dbeca36991313306218641136"
+source = "git+https://github.com/gitarcode/rust-postgres?rev=418e011eb5ea53fa2ca8050726df3fb6e224e60d#418e011eb5ea53fa2ca8050726df3fb6e224e60d"
 dependencies = [
  "async-trait",
  "byteorder",
@@ -5662,15 +5662,6 @@ name = "windows-sys"
 version = "0.52.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "282be5f36a8ce781fad8c8ae18fa3f9beff57ec1b52cb3de0789201425d9a33d"
-dependencies = [
- "windows-targets 0.52.6",
-]
-
-[[package]]
-name = "windows-sys"
-version = "0.59.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1e38bc4d79ed67fd075bcc251a1c39b32a1776bbe92e5bef1f0bf1f8c531853b"
 dependencies = [
  "windows-targets 0.52.6",
 ]

@@ -97,7 +97,7 @@ dotenv = "0.15.0"
 # Quaint pins the original PgBouncer driver. Override the complete driver family
 # together so TLS and Postgres types use the same patched client.
 [patch."https://github.com/pimeys/rust-postgres"]
-tokio-postgres = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
-postgres-protocol = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
-postgres-types = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
-postgres-native-tls = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
+tokio-postgres = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
+postgres-protocol = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
+postgres-types = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }
+postgres-native-tls = { git = "https://github.com/gitarcode/rust-postgres", rev = "418e011eb5ea53fa2ca8050726df3fb6e224e60d" }

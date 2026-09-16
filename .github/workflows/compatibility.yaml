@@ -1,7 +1,7 @@
 name: Compatibility binaries
 on:
   push:
-    branches: [gautam/security-compatible-0.6.11]
+    branches: [gitar-0.6.11]
   workflow_dispatch:
 permissions:
   contents: read
@@ -81,7 +81,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: gitarcode/rust-postgres
-          ref: 58ed93c82fa95b2dbeca36991313306218641136
+          ref: 418e011eb5ea53fa2ca8050726df3fb6e224e60d
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: clippy
@@ -89,3 +89,4 @@ jobs:
       - run: cargo clippy -p tokio-postgres -p postgres -p postgres-native-tls --all-targets
       - run: cargo test -p postgres-protocol -p tokio-postgres --lib
       - run: cargo test -p tokio-postgres --test test pgbouncer_type_lookup_after_deallocate
+      - run: cargo test -p tokio-postgres --test test database_error_retains_server_message
