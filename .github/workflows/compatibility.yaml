@@ -1,99 +1,30 @@
 name: Compatibility binaries
 on:
-  push:
-    branches: [gitar-0.6.11]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  build:
-    name: Build ${{ matrix.target }}
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - target: aarch64-apple-darwin
-            runner: namespace-profile-gitar-macos
-            features: postgresql,mocking
-          - target: x86_64-unknown-linux-gnu
-            runner: namespace-profile-gitar
-            features: postgresql,mocking
-          - target: aarch64-unknown-linux-gnu
-            runner: namespace-profile-gitar
-            features: postgresql,mocking
-    runs-on: ${{ matrix.runner }}
-    steps:
-      - uses: namespacelabs/nscloud-checkout-action@v8
-      - uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
-      - uses: goto-bus-stop/setup-zig@v2
-        if: matrix.target != 'aarch64-apple-darwin'
-        with:
-          version: 0.13.0
-      - run: cargo install cargo-zigbuild --locked
-        if: matrix.target != 'aarch64-apple-darwin'
-      - uses: Swatinem/rust-cache@v2
-        with:
-          key: compatibility-${{ matrix.target }}
-      - name: Build native binary
-        if: matrix.target == 'aarch64-apple-darwin'
-        run: cargo build --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}
-      - name: Build portable Linux binary
-        if: matrix.target != 'aarch64-apple-darwin'
-        run: cargo zigbuild --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}.2.28
-      - name: Verify the CLI dependency tree uses rustls
-        shell: bash
-        run: |
-          cargo tree --locked -p prisma-cli --features postgresql,mocking --target ${{ matrix.target }} -e normal,build --prefix none > /tmp/prisma-dependencies.txt
-          if grep -E '^(native-tls|openssl|openssl-sys|postgres-native-tls) v' /tmp/prisma-dependencies.txt; then
-            exit 1
-          fi
-      - name: Package binary and source revision
-        env:
-          TARGET: ${{ matrix.target }}
-        run: |
-          mkdir -p artifacts
-          cp "target/$TARGET/release/prisma" "artifacts/prisma-cli-$TARGET"
-          git rev-parse HEAD > artifacts/source-sha.txt
-          cd artifacts
-          zip "prisma-cli-$TARGET.zip" "prisma-cli-$TARGET" source-sha.txt
-      - name: Test x86 binary on Debian 12 with an empty engine cache
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
-        run: |
-          cp artifacts/prisma-cli-x86_64-unknown-linux-gnu tests/compatibility/prisma
-          docker run --rm -v "$PWD/tests/compatibility:/work" debian:bookworm-slim sh -ec '
-            apt-get update -qq
-            apt-get install -y -qq ca-certificates openssl rustfmt
-            export PATH=/work:$PATH
-            export DATABASE_URL=postgresql://postgres@localhost:5432/postgres
-            prisma generate --schema /work/schema.prisma
-            test -s /work/prisma.rs
-          '
-      - uses: actions/upload-artifact@v4
-        with:
-          name: prisma-cli-${{ matrix.target }}-${{ github.sha }}
-          path: artifacts/*.zip
-          retention-days: 30
-  driver-tests:
+  postgres-tls:
     runs-on: namespace-profile-gitar
-    services:
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_HOST_AUTH_METHOD: trust
-        ports: [5433:5432]
-        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: gitarcode/rust-postgres
-          ref: 418e011eb5ea53fa2ca8050726df3fb6e224e60d
+          repository: gitarcode/quaint
+          ref: ea500bf2cc166b372a4e2e862e00783f283d408b
       - uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy
+          components: clippy,rustfmt
       - uses: Swatinem/rust-cache@v2
-      - run: cargo clippy -p tokio-postgres -p postgres -p postgres-native-tls --all-targets
-      - run: cargo test -p postgres-protocol -p tokio-postgres --lib
-      - run: cargo test -p tokio-postgres --test test pgbouncer_type_lookup_after_deallocate
-      - run: cargo test -p tokio-postgres --test test database_error_retains_server_message
+        with:
+          workspaces: |
+            . -> target
+            tests/rustls -> target
+      - run: cargo check --locked --no-default-features --features postgresql,pooled,json,uuid,chrono,bigdecimal
+      - run: cargo clippy --locked --manifest-path tests/rustls/Cargo.toml --all-targets
+      - run: python3 tests/rustls/run.py
+      - name: Verify Postgres dependency tree has no native TLS or OpenSSL
+        run: |
+          cargo tree --locked --manifest-path tests/rustls/Cargo.toml -e normal,build --prefix none > /tmp/postgres-dependencies.txt
+          if grep -E '^(native-tls|openssl|openssl-sys|postgres-native-tls) v' /tmp/postgres-dependencies.txt; then
+            exit 1
+          fi
