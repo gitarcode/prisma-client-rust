@@ -3,7 +3,7 @@ use std::str::FromStr;
 use dml::{FieldArity, FieldType, ScalarField, ScalarType};
 use psl::{builtin_connectors, datamodel_connector::Connector};
 
-use dmmf::{DmmfInputField, DmmfInputType, DmmfSchema, TypeLocation};
+use ::dmmf::{DmmfInputField, DmmfInputType, DmmfSchema, TypeLocation};
 use proc_macro2::TokenStream;
 
 use crate::{dmmf::EngineDMMF, prelude::*, FieldTypeExt};

@@ -9,19 +9,8 @@ rust-version = "1.62"
 exclude = ["examples", "integration-tests"]
 
 [workspace]
-members = [
-  "examples/*",
-  "examples/tauri/src-tauri",
-  "integration-tests",
-  "tests/*/*",
-  "sdk",
-  "sdk/example/*",
-  "cli",
-  "macros",
-  "prisma-cli",
-  "tests/*/*"
-]
-exclude = ["examples/tauri"]
+members = ["cli", "macros", "sdk", "prisma-cli"]
+exclude = ["examples", "integration-tests", "tests", "sdk/example"]
 resolver = "2"
 
 [features]
@@ -104,3 +93,11 @@ specta = { optional = true, workspace = true, features = [
 # features = "rspc"
 rspc = { optional = true, workspace = true }
 dotenv = "0.15.0"
+
+# Quaint pins the original PgBouncer driver. Override the complete driver family
+# together so TLS and Postgres types use the same patched client.
+[patch."https://github.com/pimeys/rust-postgres"]
+tokio-postgres = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
+postgres-protocol = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
+postgres-types = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }
+postgres-native-tls = { git = "https://github.com/gitarcode/rust-postgres", rev = "58ed93c82fa95b2dbeca36991313306218641136" }

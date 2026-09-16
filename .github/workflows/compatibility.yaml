@@ -1,0 +1,79 @@
+name: Compatibility binaries
+on:
+  push:
+    branches: [gautam/security-compatible-0.6.11]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    name: Build ${{ matrix.target }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: aarch64-apple-darwin
+            runner: namespace-profile-gitar-macos
+            features: postgresql,mocking
+          - target: x86_64-unknown-linux-gnu
+            runner: namespace-profile-gitar
+            features: postgresql,mocking,vendored-openssl
+          - target: aarch64-unknown-linux-gnu
+            runner: namespace-profile-gitar
+            features: postgresql,mocking,vendored-openssl
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: namespacelabs/nscloud-checkout-action@v8
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: goto-bus-stop/setup-zig@v2
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        with:
+          version: 0.13.0
+      - run: cargo install cargo-zigbuild --locked
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          key: compatibility-${{ matrix.target }}
+      - name: Build native binary
+        if: matrix.target != 'aarch64-unknown-linux-gnu'
+        run: cargo build --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}
+      - name: Build ARM Linux binary
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        run: cargo zigbuild --locked --release -p prisma-cli --features ${{ matrix.features }} --target ${{ matrix.target }}
+      - name: Package binary and source revision
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          mkdir -p artifacts
+          cp "target/$TARGET/release/prisma" "artifacts/prisma-cli-$TARGET"
+          git rev-parse HEAD > artifacts/source-sha.txt
+          cd artifacts
+          zip "prisma-cli-$TARGET.zip" "prisma-cli-$TARGET" source-sha.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prisma-cli-${{ matrix.target }}-${{ github.sha }}
+          path: artifacts/*.zip
+          retention-days: 30
+  driver-tests:
+    runs-on: namespace-profile-gitar
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_HOST_AUTH_METHOD: trust
+        ports: [5433:5432]
+        options: --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: gitarcode/rust-postgres
+          ref: 58ed93c82fa95b2dbeca36991313306218641136
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo clippy -p tokio-postgres -p postgres -p postgres-native-tls --all-targets
+      - run: cargo test -p postgres-protocol -p tokio-postgres --lib
+      - run: cargo test -p tokio-postgres --test test pgbouncer_type_lookup_after_deallocate

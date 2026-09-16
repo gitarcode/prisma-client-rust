@@ -5,7 +5,7 @@ use std::{
     sync::Arc,
 };
 
-use dmmf::from_precomputed_parts;
+use ::dmmf::from_precomputed_parts;
 use query_core::schema_builder;
 
 use crate::{
@@ -83,7 +83,7 @@ impl GeneratorMetadata {
 
             stderr()
                 .by_ref()
-                .write(bytes.as_ref())
+                .write_all(bytes.as_ref())
                 .expect("Failed to write output to stderr for Prisma engines");
 
             if input.method.as_str() == "generate" {

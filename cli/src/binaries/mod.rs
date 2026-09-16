@@ -1,8 +1,8 @@
 pub mod platform;
 
+use ::reqwest::StatusCode;
 use directories::BaseDirs;
 use flate2::read::GzDecoder;
-use http::StatusCode;
 use reqwest::blocking as reqwest;
 use std::fs::{copy, create_dir_all, metadata, File};
 use std::io;
@@ -161,7 +161,7 @@ fn download(url: String, to: String) -> Result<(), ()> {
         .unwrap();
 
     tmp_file
-        .write(buffer.as_slice())
+        .write_all(buffer.as_slice())
         .expect("could not write to .tmp file");
 
     copy(tmp, to).expect(&format!("could not copy file {}", url));
