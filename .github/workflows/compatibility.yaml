@@ -51,6 +51,18 @@ jobs:
           git rev-parse HEAD > artifacts/source-sha.txt
           cd artifacts
           zip "prisma-cli-$TARGET.zip" "prisma-cli-$TARGET" source-sha.txt
+      - name: Test x86 binary on Debian 12 with an empty engine cache
+        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: |
+          cp artifacts/prisma-cli-x86_64-unknown-linux-gnu tests/compatibility/prisma
+          docker run --rm -v "$PWD/tests/compatibility:/work" debian:bookworm-slim sh -ec '
+            apt-get update -qq
+            apt-get install -y -qq ca-certificates openssl rustfmt
+            export PATH=/work:$PATH
+            export DATABASE_URL=postgresql://postgres@localhost:5432/postgres
+            prisma generate --schema /work/schema.prisma
+            test -s /work/prisma.rs
+          '
       - uses: actions/upload-artifact@v4
         with:
           name: prisma-cli-${{ matrix.target }}-${{ github.sha }}

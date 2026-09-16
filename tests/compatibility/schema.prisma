@@ -1,0 +1,22 @@
+generator client {
+  provider = "prisma"
+  output   = "./prisma.rs"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum State {
+  pending
+  complete
+}
+
+model Item {
+  id        String   @id @default(uuid()) @db.Uuid
+  state     State    @default(pending)
+  labels    String[]
+  metadata  Json
+  createdAt DateTime @default(now())
+}
