@@ -97,3 +97,37 @@ jobs:
       - run: cargo test -p postgres-protocol -p tokio-postgres --lib
       - run: cargo test -p tokio-postgres --test test pgbouncer_type_lookup_after_deallocate
       - run: cargo test -p tokio-postgres --test test database_error_retains_server_message
+  quaint-tests:
+    runs-on: namespace-profile-gitar
+    steps:
+      - uses: actions/checkout@v4
+      - name: Read the pinned Quaint revision
+        id: quaint
+        run: |
+          python3 - <<'PYTHON'
+          import os
+          import tomllib
+          with open("Cargo.toml", "rb") as source:
+              revision = tomllib.load(source)["patch"]["https://github.com/Brendonovich/quaint"]["quaint"]["rev"]
+          with open(os.environ["GITHUB_OUTPUT"], "a") as output:
+              output.write(f"rev={revision}\n")
+          PYTHON
+      - uses: actions/checkout@v4
+        with:
+          repository: gitarcode/quaint
+          ref: ${{ steps.quaint.outputs.rev }}
+          path: quaint-source
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: quaint-source/tests/rustls -> target
+      - run: cargo clippy --locked --manifest-path quaint-source/tests/rustls/Cargo.toml --all-targets
+      - run: python3 quaint-source/tests/rustls/run.py
+      - name: Verify the connector dependency tree uses rustls
+        run: |
+          cargo tree --locked --manifest-path quaint-source/tests/rustls/Cargo.toml -e normal,build --prefix none > /tmp/quaint-dependencies.txt
+          if grep -E '^(native-tls|openssl|openssl-sys|postgres-native-tls) v' /tmp/quaint-dependencies.txt; then
+            exit 1
+          fi
