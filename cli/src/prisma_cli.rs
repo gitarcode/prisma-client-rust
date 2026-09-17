@@ -2,16 +2,15 @@ use crate::binaries::{self, platform, ENGINES};
 use std::env;
 use std::process::Command;
 
-pub fn main(args: &Vec<String>) {
+pub fn main(args: &[String]) -> Result<i32, String> {
     let dir = binaries::global_cache_dir();
 
-    binaries::fetch_native(&dir).unwrap();
+    binaries::fetch_native(&dir)?;
 
     let prisma = binaries::prisma_cli_name();
 
     let mut cmd = Command::new(dir.join(prisma));
-    let binary_name =
-        platform::check_for_extension(&platform::name(), &platform::binary_platform_name());
+    let binary_name = platform::binary_platform_name()?;
 
     cmd.args(args);
 
@@ -37,5 +36,8 @@ pub fn main(args: &Vec<String>) {
     cmd.stdin(std::process::Stdio::inherit());
     cmd.stderr(std::process::Stdio::inherit());
 
-    cmd.output().unwrap();
+    let status = cmd
+        .status()
+        .map_err(|error| format!("Cannot start Prisma CLI: {error}"))?;
+    Ok(status.code().unwrap_or(1))
 }

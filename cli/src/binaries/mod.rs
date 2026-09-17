@@ -1,18 +1,17 @@
 pub mod platform;
 
-use ::reqwest::StatusCode;
 use directories::BaseDirs;
 use flate2::read::GzDecoder;
 use reqwest::blocking as reqwest;
-use std::fs::{copy, create_dir_all, metadata, File};
+use sha2::{Digest, Sha256};
+use std::collections::BTreeMap;
+use std::fs::{create_dir_all, metadata, File};
 use std::io;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
 pub static PRISMA_CLI_VERSION: &str = "4.8.0";
-// commit hash of prisma/prisma-engines, not brendonovich/prisma-engines
-pub static ENGINE_VERSION: &str = "d6e67a83f971b175a593ccc12e15c4a757f93ffe";
+pub static ENGINE_VERSION: &str = "v4.8.0-gitar.1";
 pub static BASE_DIR_NAME: &str = "prisma/binaries";
 
 pub struct Engine<'a> {
@@ -64,7 +63,9 @@ pub fn fetch_native(to_dir: &PathBuf) -> Result<(), String> {
     download_cli(to_dir)?;
 
     for e in &ENGINES {
-        download_engine(&e.name, &to_dir)?;
+        if std::env::var_os(e.env).is_none() {
+            download_engine(e.name, to_dir)?;
+        }
     }
 
     Ok(())
@@ -95,76 +96,129 @@ pub fn download_cli(to_dir: &PathBuf) -> Result<(), String> {
 
     println!("Downloading {} to {}", url, to);
 
-    download(url.clone(), to.clone()).expect(&format!("could not download {} to {}", url, to));
+    download(&url, Path::new(&to), None)?;
 
     Ok(())
 }
 
-fn download_engine(engine_name: &str, to_dir: &PathBuf) -> Result<(), String> {
-    let os_name = platform::binary_platform_name();
+#[derive(serde::Deserialize)]
+struct EngineManifest {
+    release: String,
+    targets: BTreeMap<String, BTreeMap<String, String>>,
+}
 
-    let to = platform::check_for_extension(
-        &os_name.to_string(),
-        &to_dir
-            .join(ENGINE_VERSION)
-            .join(format!("prisma-{}-{}", engine_name, os_name))
-            .into_os_string()
-            .into_string()
-            .unwrap(),
+fn download_engine(engine_name: &str, to_dir: &Path) -> Result<(), String> {
+    let target = platform::binary_platform_name()?;
+    let manifest: EngineManifest = serde_json::from_str(include_str!("engines.json"))
+        .map_err(|error| format!("Invalid bundled engine manifest: {error}"))?;
+    if manifest.release != ENGINE_VERSION {
+        return Err("Engine release and bundled checksum manifest disagree".into());
+    }
+    let checksum = manifest
+        .targets
+        .get(target)
+        .and_then(|engines| engines.get(engine_name))
+        .ok_or_else(|| format!("No checksum for {engine_name} on {target}"))?;
+    let to = to_dir
+        .join(ENGINE_VERSION)
+        .join(format!("prisma-{engine_name}-{target}"));
+    if to.is_file() {
+        return Ok(());
+    }
+    let url = format!(
+        "https://github.com/gitarcode/prisma-engines/releases/download/{ENGINE_VERSION}/{engine_name}-{target}.gz"
     );
+    download(&url, &to, Some(checksum))
+}
 
-    let url = platform::check_for_extension(
-        &os_name.to_string(),
-        &format!(
-            "https://binaries.prisma.sh/all_commits/{}/{}/{}.gz",
-            ENGINE_VERSION, &os_name, engine_name
-        ),
-    );
-
-    match metadata(&to) {
-        Err(_) => {}
-        Ok(_) => {
-            return Ok(());
+fn decode_archive(bytes: &[u8], checksum: Option<&str>) -> Result<Vec<u8>, String> {
+    if let Some(expected) = checksum {
+        let actual = format!("{:x}", Sha256::digest(bytes));
+        if actual != expected {
+            return Err(format!(
+                "Engine checksum mismatch: expected {expected}, got {actual}"
+            ));
         }
-    };
+    }
+    let mut binary = Vec::new();
+    GzDecoder::new(bytes)
+        .read_to_end(&mut binary)
+        .map_err(|error| format!("Invalid engine archive: {error}"))?;
+    Ok(binary)
+}
 
-    println!("Downloading {} to {}", url, to);
-    download(url.clone(), to.clone()).expect(&format!("could not download {} to {}", url, to));
-
+fn download(url: &str, to: &Path, checksum: Option<&str>) -> Result<(), String> {
+    let parent = to
+        .parent()
+        .ok_or_else(|| "Download path has no parent".to_string())?;
+    create_dir_all(parent)
+        .map_err(|error| format!("Cannot create {}: {error}", parent.display()))?;
+    let response = reqwest::get(url)
+        .and_then(|response| response.error_for_status())
+        .map_err(|error| format!("Cannot download {url}: {error}"))?;
+    let bytes = response
+        .bytes()
+        .map_err(|error| format!("Cannot read {url}: {error}"))?;
+    let binary = decode_archive(&bytes, checksum)?;
+    // Concurrent generator processes must never execute a partially written engine.
+    let temporary = to.with_extension(format!("{}.tmp", std::process::id()));
+    let result = (|| -> io::Result<()> {
+        let mut file = File::create(&temporary)?;
+        file.write_all(&binary)?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            file.set_permissions(std::fs::Permissions::from_mode(0o755))?;
+        }
+        std::fs::rename(&temporary, to)
+    })();
+    if let Err(error) = result {
+        let _ = std::fs::remove_file(&temporary);
+        return Err(format!("Cannot install {}: {error}", to.display()));
+    }
     Ok(())
 }
 
-fn download(url: String, to: String) -> Result<(), ()> {
-    create_dir_all(Path::new(&to).parent().unwrap()).unwrap();
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use flate2::{write::GzEncoder, Compression};
 
-    let tmp = &(to.clone() + ".tmp");
-
-    let resp = reqwest::get(&url).unwrap();
-
-    if resp.status() != StatusCode::OK {
-        panic!("received code {} from {}", resp.status(), &url);
-    };
-
-    let mut tmp_file = File::create(tmp).expect(&format!("could not create {}", tmp));
-
-    if !cfg!(target_os = "windows") {
-        Command::new("chmod")
-            .arg("+x")
-            .arg(tmp)
-            .output()
-            .expect("failed to make file executable");
+    #[test]
+    fn bundled_manifest_covers_release_targets() -> Result<(), Box<dyn std::error::Error>> {
+        let manifest: EngineManifest = serde_json::from_str(include_str!("engines.json"))?;
+        assert_eq!(manifest.release, ENGINE_VERSION);
+        for target in [
+            "aarch64-apple-darwin",
+            "aarch64-unknown-linux-gnu",
+            "x86_64-unknown-linux-gnu",
+        ] {
+            let engines = manifest
+                .targets
+                .get(target)
+                .ok_or("missing release target")?;
+            for engine in ENGINES {
+                let checksum = engines.get(engine.name).ok_or("missing engine checksum")?;
+                assert_eq!(checksum.len(), 64);
+                assert!(checksum.bytes().all(|byte| byte.is_ascii_hexdigit()));
+            }
+        }
+        Ok(())
     }
 
-    let mut buffer = Vec::new();
-    io::BufReader::new(GzDecoder::new(resp))
-        .read_to_end(&mut buffer)
-        .unwrap();
-
-    tmp_file
-        .write_all(buffer.as_slice())
-        .expect("could not write to .tmp file");
-
-    copy(tmp, to).expect(&format!("could not copy file {}", url));
-
-    Ok(())
+    #[test]
+    fn archive_checksum_is_checked_before_decompression() -> Result<(), Box<dyn std::error::Error>>
+    {
+        let mut encoder = GzEncoder::new(Vec::new(), Compression::default());
+        encoder.write_all(b"engine fixture")?;
+        let archive = encoder.finish()?;
+        let checksum = format!("{:x}", Sha256::digest(&archive));
+        assert_eq!(
+            decode_archive(&archive, Some(&checksum))?,
+            b"engine fixture"
+        );
+        assert!(decode_archive(&archive, Some("incorrect")).is_err());
+        assert!(decode_archive(b"not gzip", None).is_err());
+        Ok(())
+    }
 }

@@ -1,0 +1,24 @@
+{
+  "release": "v4.8.0-gitar.1",
+  "source": "be72d5cbccc9a04646c26cb47626b4e86b841d50",
+  "targets": {
+    "x86_64-unknown-linux-gnu": {
+      "query-engine": "51a1b98a047b89e1c55ac98a572e9aa48d91e7e0c2ffa569818bfeb95853642a",
+      "migration-engine": "ecf52d657dff330898977204baf23d7fe799b1eb6c6f3391a2dcfb72625de1ad",
+      "introspection-engine": "fb913831cfbd469035a8dff4c650f705ba84887f39ec8c8a28805b3298f76e83",
+      "prisma-fmt": "48f2323edfbb43911d903c7c633aebce3f8bd6d2903ee4b7ea79d531e3064e72"
+    },
+    "aarch64-unknown-linux-gnu": {
+      "query-engine": "9b0315482f106746ea7414c0def90569fdd638b32486199037b2ce9ec37daf2e",
+      "migration-engine": "5720f52973352e8aba15f2ee71c5e4e19e58bca65469b2bfae5016c9fc2b3212",
+      "introspection-engine": "638bfe6a969bbde8bf0f9a18eab022443f4fea02be3fdce349ea88c6156f0083",
+      "prisma-fmt": "3f571ba1a2c16afa3473e97001fda16d5682dac86d1217231ee8fe1a077e7009"
+    },
+    "aarch64-apple-darwin": {
+      "query-engine": "0537b5846fcb6a5c8036b959bbeda8a20aac24d60c93f2a12085ff231ff9d1c5",
+      "migration-engine": "291768d8250262cc2d65b6c64bff5a7ed60e0c176dba309a4ee85a9a809250a4",
+      "introspection-engine": "4d543b4709e60994f66253732461e89fff6c56e8c23727970af76eea0bbe3282",
+      "prisma-fmt": "dc6145ab7e404e7dd5b0a73259765f6945864447ff26b6ac6c2f14f59743d9bd"
+    }
+  }
+}

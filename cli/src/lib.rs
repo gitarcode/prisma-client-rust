@@ -13,8 +13,14 @@ pub fn run() {
     let args = args.skip(1).collect::<Vec<_>>();
 
     if std::env::var("PRISMA_GENERATOR_INVOCATION").is_err() {
-        prisma_cli::main(&args);
-        return;
+        let status = match prisma_cli::main(&args) {
+            Ok(status) => status,
+            Err(error) => {
+                eprintln!("{error}");
+                1
+            }
+        };
+        std::process::exit(status);
     }
 
     PrismaClientRustGenerator::run();
