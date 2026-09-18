@@ -1,11 +1,12 @@
 pub mod platform;
+mod runner;
 
 use directories::BaseDirs;
 use flate2::read::GzDecoder;
 use reqwest::blocking as reqwest;
 use sha2::{Digest, Sha256};
 use std::collections::BTreeMap;
-use std::fs::{create_dir_all, metadata, File};
+use std::fs::{create_dir_all, File};
 use std::io;
 use std::io::prelude::*;
 use std::path::{Path, PathBuf};
@@ -38,29 +39,29 @@ pub const ENGINES: [Engine; 4] = [
     },
 ];
 
-pub fn prisma_cli_name() -> String {
-    let variation = platform::name();
-    let arch = platform::arch();
-
-    format!("prisma-cli-{variation}-{arch}")
-}
-
-pub fn global_cache_dir() -> PathBuf {
-    let base_dirs = BaseDirs::new().unwrap();
+pub fn global_cache_dir() -> Result<PathBuf, String> {
+    if let Some(path) = std::env::var_os("PRISMA_CLI_CACHE_DIR") {
+        let path = PathBuf::from(path);
+        if !path.is_absolute() {
+            return Err("PRISMA_CLI_CACHE_DIR must be absolute".into());
+        }
+        return Ok(path);
+    }
+    let base_dirs = BaseDirs::new().ok_or("Cannot resolve the Prisma cache directory")?;
     let cache_dir = base_dirs.cache_dir();
 
-    cache_dir
+    Ok(cache_dir
         .join(BASE_DIR_NAME)
         .join("cli")
-        .join(PRISMA_CLI_VERSION)
+        .join(PRISMA_CLI_VERSION))
 }
 
-pub fn fetch_native(to_dir: &PathBuf) -> Result<(), String> {
+pub fn fetch_native(to_dir: &Path) -> Result<runner::Runner, String> {
     if !to_dir.is_absolute() {
         Err("to_dir must be absolute".to_string())?;
     }
 
-    download_cli(to_dir)?;
+    let runner = runner::install(to_dir)?;
 
     for e in &ENGINES {
         if std::env::var_os(e.env).is_none() {
@@ -68,37 +69,7 @@ pub fn fetch_native(to_dir: &PathBuf) -> Result<(), String> {
         }
     }
 
-    Ok(())
-}
-
-pub fn download_cli(to_dir: &PathBuf) -> Result<(), String> {
-    let cli = prisma_cli_name();
-
-    let to = platform::check_for_extension(&platform::name(), &to_dir.join(cli).to_str().unwrap());
-
-    let url = platform::check_for_extension(
-        &platform::name(),
-        &format!(
-            "https://prisma-photongo.s3-eu-west-1.amazonaws.com/{}-{}-{}-{}.gz",
-            "prisma-cli",
-            PRISMA_CLI_VERSION,
-            platform::name(),
-            platform::arch()
-        ),
-    );
-
-    match metadata(&to) {
-        Err(_) => (),
-        Ok(_) => {
-            return Ok(());
-        }
-    };
-
-    println!("Downloading {} to {}", url, to);
-
-    download(&url, Path::new(&to), None)?;
-
-    Ok(())
+    Ok(runner)
 }
 
 #[derive(serde::Deserialize)]

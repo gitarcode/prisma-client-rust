@@ -1,6 +1,7 @@
 name: CI
 on:
   pull_request:
+    branches: [main]
   push:
     branches:
     - main
@@ -39,11 +40,11 @@ jobs:
     - name: Rename existing rust toolchain (Windows)
       if: matrix.os == 'windows-latest'
       run: Rename-Item C:\Users\runneradmin\.rustup\toolchains\stable-x86_64-pc-windows-msvc C:\Users\runneradmin\.rustup\toolchains\stable-x86_64-pc-windows-msvc.old
-    
+
     - name: Instal libssl (Ubuntu)
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get install libssl-dev
-    
+
     - name: Install Rust toolchain
       uses: actions-rs/toolchain@v1
       with:
@@ -54,7 +55,7 @@ jobs:
 
     - name: Cache Dependencies
       uses: Swatinem/rust-cache@ce325b60658c1b38465c06cc965b79baf32c1e72
-    
+
     - name: Generate client
       working-directory: integration-tests
       run: cargo prisma generate

@@ -1,0 +1,139 @@
+{
+  "node_version": "24.21.0",
+  "prisma_version": "4.8.0",
+  "nodes": {
+    "aarch64-apple-darwin": {
+      "url": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-darwin-arm64.tar.gz",
+      "sha256": "bed7eea5325e1108f32ce5228ddd6a5f0f08a499ee42aa7442aea583702f6057",
+      "prefix": "node-v24.21.0-darwin-arm64",
+      "files": {
+        "bin/node": "e4b5a3af0e05c75de2eae013904145f40fe7fc2a6e6f17510128bf45cca4e79b",
+        "LICENSE": "5888dbb9a1d2b18f2c3e6c5f6af1b39de658372b402a0577b002777f14c62ace"
+      }
+    },
+    "aarch64-unknown-linux-gnu": {
+      "url": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-arm64.tar.gz",
+      "sha256": "724282c3b43aec998aa9527380465b45d229e021b58035f5f4f63095eabfe5d5",
+      "prefix": "node-v24.21.0-linux-arm64",
+      "files": {
+        "bin/node": "0f8949d1028f6d61506b2d5bc57e7e6fe893d7b1997509b7847294fc9c616584",
+        "LICENSE": "5888dbb9a1d2b18f2c3e6c5f6af1b39de658372b402a0577b002777f14c62ace"
+      }
+    },
+    "x86_64-unknown-linux-gnu": {
+      "url": "https://nodejs.org/dist/v24.21.0/node-v24.21.0-linux-x64.tar.gz",
+      "sha256": "6e1db87ef58b8819e5d5402eff1536491b18edd8eb7bee5ef7897876e88dc5ff",
+      "prefix": "node-v24.21.0-linux-x64",
+      "files": {
+        "bin/node": "7fde7b8afa198da66257f42ee2001d874c7355631e6d1579a5fb5ef1f246df4c",
+        "LICENSE": "5888dbb9a1d2b18f2c3e6c5f6af1b39de658372b402a0577b002777f14c62ace"
+      }
+    }
+  },
+  "packages": [
+    {
+      "name": "prisma",
+      "files": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "README.md": "8c84cd87ee1dc2b137e3e1101b324e2480a7e631e874849a2cc1fb4e43a1cdde",
+        "build/child.js": "17f5dd85527c122c345025e6a28e03d72c5bea1b6a0d459490f348e42b0f0dad",
+        "build/index.js": "a48fc7bb8a2a2ef9177001c683cc5b2b29816b77d443a274d5a06bf029bd6c5c",
+        "build/prisma_fmt_build_bg.wasm": "7e7dbc11267035199250a66803d676a8c8a03e11ba19910f8671833ce6bf1e13",
+        "build/public/assets/alert.60ea9f84.svg": "60ea9f846dff4acc207fb1b502e927b9902dba938f1c6638a113350560f0dd52",
+        "build/public/assets/array.1a36c222.svg": "1a36c2228a55c61b87d7ca35a0e7e58053c806d6b1dc48e79b105b93dff2eb4c",
+        "build/public/assets/boolean.9188b434.svg": "9188b4345a12ee28b7587d34192fc22d9b9c0f25dcc2065fbf813242e85d5a93",
+        "build/public/assets/chevron-down.24f76e3c.svg": "24f76e3c6cf393bd3badf71faa16d1990efd98296ee2396d7173f235bcf28a6e",
+        "build/public/assets/cross.c2610cf5.svg": "c2610cf52f598ad8e0a7e038c0b4d71f59edfd6ed78d4d9471c19b956156a40c",
+        "build/public/assets/datetime.a3bf710a.svg": "a3bf710a4309655b437e72f1b75ab55f8204e73247e604b649392b25e4c57cfe",
+        "build/public/assets/download.8d34b65a.svg": "8d34b65a85bb6f62e0a50724c9075a94527e6a0d1af92d7951b7276887ec6a89",
+        "build/public/assets/ellipsis.a8c5a34a.svg": "a8c5a34af5be4e2426aecf460b05155d6c78974be12cf714fea51d2c505c11b2",
+        "build/public/assets/enum.7ec0b64c.svg": "7ec0b64c7be2d733081521aa23ee51cca580ddb6deea5b45a83b2df8c78395a8",
+        "build/public/assets/folder.d77b8eaf.svg": "d77b8eafd83cbee7b51bafe9dd389eec64801e5d8b40a08eb1256a84157f491b",
+        "build/public/assets/hamburger.5fdadeac.svg": "5fdadeacc36339d74f7487f769a46728a240896add9d99c8a5d027a2b54e60b7",
+        "build/public/assets/index.js": "bfcb50068715bd3e07ee74aed14f77e5ecda6439aad11bbd74d72ef8ada3dedf",
+        "build/public/assets/inter-all-400-normal.4c1f8a0d.woff": "4c1f8a0d5ef1e04d7e14d194a4ef624345e7c7c1cdb4ff61d4552e32a60ac1d0",
+        "build/public/assets/inter-all-600-normal.d0a7c8a9.woff": "d0a7c8a993b9310ebb74a893fa564133bc129f6af41126eb98d207c813b96093",
+        "build/public/assets/inter-cyrillic-400-normal.ac97a49e.woff2": "ac97a49eca5ce5218b7dc5da931a69182aca421e1a66a3e03c0d7c84e1197541",
+        "build/public/assets/inter-cyrillic-600-normal.2c917f10.woff2": "2c917f10b6896b55f3793d1956066271ab909e52c8bffce225c4cd9bfad936fe",
+        "build/public/assets/inter-cyrillic-ext-400-normal.f21a6a97.woff2": "f21a6a97f08901ceed020bc58cf50ed44bf1fc62fd2f920177a3112e3f579cb0",
+        "build/public/assets/inter-cyrillic-ext-600-normal.bb31f197.woff2": "bb31f197d44718fce59f2936615168edbad9ca3e386b28ddc68c982b3675a0db",
+        "build/public/assets/inter-greek-400-normal.e9163df8.woff2": "e9163df802bb09d4a7642248fe44c1e234b1b803abab3e870e26673980dfb02a",
+        "build/public/assets/inter-greek-600-normal.e644d70f.woff2": "e644d70f8f22dbed6f177e58a6bb72ad81ab11b4568c70ea3d7d0a9ba90bbe7c",
+        "build/public/assets/inter-greek-ext-400-normal.43addcc8.woff2": "43addcc8f0505fd25ed1bee5f1df8182759c31e871643c2cf4b14d8a269e1655",
+        "build/public/assets/inter-greek-ext-600-normal.7f437016.woff2": "7f4370165124400d053bd09c08a0c0e8523f03433eb9cbdf2883ffa424896ffa",
+        "build/public/assets/inter-latin-400-normal.27ae72da.woff2": "27ae72daf88c7431896929273087c99910d019ae82dc0af7d86505c0f5ef5dbf",
+        "build/public/assets/inter-latin-600-normal.87d718a2.woff2": "87d718a282da60f8ef79c2c85e2999bd0fe7a6ef3fc77ccb3ad8a5ff8474b1ef",
+        "build/public/assets/inter-latin-ext-400-normal.5b02c69a.woff2": "5b02c69a8b7169da95612efd3003a29290b5b5dc573efe993ae066db23733714",
+        "build/public/assets/inter-latin-ext-600-normal.88feb9e4.woff2": "88feb9e4406cd478925f7ecf204cd31bfeb53b10694d4e16fd018187a82dc16d",
+        "build/public/assets/inter-vietnamese-600-normal.8185dacd.woff2": "8185dacd90a13f274cb37ffab50c79fa3e6191be2d14e9e804de5f74e6b385f7",
+        "build/public/assets/jetbrains-mono-all-400-normal.f86807b7.woff": "f86807b7a7aea856964b2010ab53d7b2cbacb0a5c2ce4c7b81103bf8455997e2",
+        "build/public/assets/jetbrains-mono-cyrillic-400-normal.1ae57fe2.woff2": "1ae57fe249bb4916830623f9824e037e375a72e5626eb946aac2a1531a146f75",
+        "build/public/assets/jetbrains-mono-latin-400-normal.80a5dc9e.woff2": "80a5dc9ee5c98aa278db4d618d253a1a9de8cfd5ff9d43a7a9cf41cbc4b6ce78",
+        "build/public/assets/jetbrains-mono-latin-ext-400-normal.6315c53c.woff2": "6315c53c76183393d75f9ead6d42aeea593d7c9b9bfa953bf4d6d3881f6fb35d",
+        "build/public/assets/logotype.a960b169.svg": "a960b169116bbed704932b6808a5efc51ce24c03d0dafed50d2bc0458ad1a8a1",
+        "build/public/assets/number.85ddf96b.svg": "85ddf96b9120707e6cb423fa7b74129f6df936545f8dee7feac8a5b5b116eb35",
+        "build/public/assets/object.0ba944a6.svg": "0ba944a6f22f291fb83c3a95bb1f4382ab7bb8da684c9410fbe3a9f20e700164",
+        "build/public/assets/play.8811691e.svg": "8811691edd5bdf7ff927519c7ece8dbcf350fa55553ad5a32dcf95aa6e0ddc6d",
+        "build/public/assets/plus.8fbf7ad3.svg": "8fbf7ad3218d46777f84ba237497927107bd98b54628e1ce1df8a5ee959b46ea",
+        "build/public/assets/refresh.d5448ccc.svg": "d5448ccc360a081541eb180883fcd3781cee6b583d5e2226fa5cefd84d15061f",
+        "build/public/assets/search.2ed766ce.svg": "2ed766ce032784cfeb1f73389bbffa264a0155b3b40368534a01aa1dcab2152a",
+        "build/public/assets/settings.5ad25af2.svg": "5ad25af29ec3d743fe977a3176ca3ee6bc277c18935bdf2eedf09f471d768d6f",
+        "build/public/assets/string.ea615a24.svg": "ea615a247275383aed0b5d6d63361f85dd6d42851d48e9db0ea0c9b0e7d946e8",
+        "build/public/assets/tick-indeterminate.aec8a44d.svg": "aec8a44d733bf35307eaa91b3ce3f8aabc0f4aea1f67e101104700a7cb719ffc",
+        "build/public/assets/tick.8cbb6a93.svg": "8cbb6a93e053ac6d4bbe5bb1983ec17e3457119e4ec038ce218515b64e55fa6d",
+        "build/public/assets/vendor.js": "4b43d1ddd63e2bbcb01e786c9fbeb51f7a3b3660758f276d845afe10e74a4a93",
+        "build/public/favicon.svg": "a08eaa01f28936b4dcfa2384ca6e7e71251d957135a3d9a377f17ec759f48f45",
+        "build/public/http/databrowser.js": "95bc49f2006d73e3495ed0637d7107156c49746e95a89e4e38ddaace028c6100",
+        "build/public/http/splash.js": "88042d6cd806bdebcef81a0a35d5d3850a89f5fbecf067f71b8ed8ecf9ff0d2d",
+        "build/public/icon-1024.png": "11bbab4a98472b4c6e56cedf6b8b0b96611af4104a19156d4296036db25659c0",
+        "build/public/index.css": "0e4426559166b7309dcf50cf6429981c564882ee99002951e801c89d0b0447ed",
+        "build/public/pages/http/databrowser.html": "ddc600ecb42508fb819132bc4f85ff5722c17f58b70cca3e15f4bc3c98cc7773",
+        "build/public/pages/http/splash.html": "72a5ee0c5ad1eeadf59d1f916ae3897eae792afda48093d6cdaa00dba87f6311",
+        "build/xdg-open": "4ef38acc21ba40c78ef9d3808fddc14fce0efeab3df27c6caa4a82d7bdac7492",
+        "install/index.js": "e9cdb6af88e928525743f30fa64ffcdc145dcfcbe1ae72fd24cc06ce6b2d2c8f",
+        "package.json": "2c8ecc8c2910ae6abece2701aad0f50bf570925467676f5a56b54c4c2ee0eb5d",
+        "preinstall/index.js": "1fef5d05363a6bbb823737bb1736581160d089f6ec7bff7ad51f76377c72fa27",
+        "prisma-client/README.md": "db376c808c671a8dfe0674275cbf8d5da765881517f00d9de831ca5dbb6ab47e",
+        "prisma-client/edge.d.ts": "022d0e5b18aa33e48e53e2fc7a558ee448a29cba6fe163a36cd5ece60cd1f7ff",
+        "prisma-client/edge.js": "2cfa752ce627ee625252ea60d1e9d16c181619459e6a3503e8d31a6685ab8ffc",
+        "prisma-client/generator-build/index.js": "7be1e8db76ed55fb3aae093291ab5a0cc0598955e8a49d7557dfd995ba77ae34",
+        "prisma-client/index-browser.js": "3d3124ae428b3514dbeb60a4270b904a063451cb82de1d96f0b16d69fd1860c6",
+        "prisma-client/index.d.ts": "022d0e5b18aa33e48e53e2fc7a558ee448a29cba6fe163a36cd5ece60cd1f7ff",
+        "prisma-client/index.js": "8b13a9c9749f7aa8087da8f50cbb385a8433cd51e912a7f17837cd5592d0c572",
+        "prisma-client/runtime/edge-esm.js": "bf7766a6459bc3e4b0d3d369c6790866171a42edfa17d9bfcbda9bcbf9c72752",
+        "prisma-client/runtime/edge.js": "4afe8470c93a63a7d0c52681b3fefb60084de983d84bce1a07f28f4bd8785d94",
+        "prisma-client/runtime/index-browser.d.ts": "bab2cb8c14c8af8c5ec66de6ed38d511a424a1fae94f6bb9d5c6ca98da90446a",
+        "prisma-client/runtime/index-browser.js": "d4e1e72d6d101e5ae00dbc3d20e6612b04382d763f20a3b4092b6f2ad2e936c1",
+        "prisma-client/runtime/index.d.ts": "ceb0ee3dd6f63ab530e4a364fc7f673c474128ccd24c308a4909dce063b11950",
+        "prisma-client/runtime/index.js": "1169f87ee13c7ec740768173364edfe51264b062f9c401ed24f11f658177e875",
+        "prisma-client/scripts/colors.js": "08eb6a703f1f8acb8c3cdd69f5c15ba958c3df657a35c7d4e30436a799847a9f",
+        "prisma-client/scripts/default-deno-edge.ts": "e33a4dc35013a5faf1a7f9f0bd4ee914b0070de60378b5a319a89f8ba54621ad",
+        "prisma-client/scripts/default-edge.js": "dc1fc74e4941929a8d56cc8a52b8bf1fd9d1d12cc7c38167731e288abfc4d794",
+        "prisma-client/scripts/default-index-browser.js": "3b96b42e115b324db7fdb6c9254218f5255fef44c0bfdd45e696c88401fb839c",
+        "prisma-client/scripts/default-index.d.ts": "6295a323d66e88c3f832df94d497952f1b982f55ce7c955e69c166efcbf73dd3",
+        "prisma-client/scripts/default-index.js": "e24a4388311861c39e4602666d3ea1647a1eb1042b217f16cd8ebabff633c501",
+        "prisma-client/scripts/get-packed-client.js": "43dd2083853c48515053198edca46618eff57676d4391286276f74f9a785cb26",
+        "prisma-client/scripts/mock-fs.js": "311301d563ee197dd63e1541cf235952a91dbb5bebe258675bd0a53224e4306f",
+        "prisma-client/scripts/postinstall.d.ts": "3bf65a90eb02f4bdf76d64569983b3770d6d54c27428682a38d836c487bc7bfd",
+        "prisma-client/scripts/postinstall.js": "7c227a99542f3d16a7c97abe49fe24013f79684182fb2c25fc5b2c4a445510c4",
+        "scripts/install-entry.js": "77499c7020e0f3ed14076591b6e6304d43e39460b21ba0fe8a56400e89478b09",
+        "scripts/preinstall-entry.js": "331e2afe45a311223b6f33439a58cbcc816ff26ec03f3e306482f5d7443fa73e"
+      }
+    },
+    {
+      "name": "@prisma/engines",
+      "files": {
+        "LICENSE": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "README.md": "8e16cab835fe30cd295d57fe019b813b66c68ac8f2ff61f5cfd4fea7852e85dc",
+        "dist/index.d.ts": "1d984b13b43a592ee3d19a7600e513e34e06a3bfc4fe3ae9a73ad69f313e3ad3",
+        "dist/index.js": "291f2d51660e2880f1e848a059b5eecced36f6dc40301015067b9a09c0c565d8",
+        "dist/scripts/localinstall.d.ts": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "dist/scripts/localinstall.js": "d026b14ce177b2983a45c4406290a6bdeca6083630fff2b6791f74e53f96f480",
+        "dist/scripts/postinstall.d.ts": "8e609bb71c20b858c77f0e9f90bb1319db8477b13f9f965f1a1e18524bf50881",
+        "dist/scripts/postinstall.js": "9dfdb0f626c569ceb0c80591fa34cece6ceb8e8d25788332948f4a83f6ed1a83",
+        "package.json": "b6830cb081b0fa5b7972211d7bb6066d8e9b746d4e72595b289a4c2aad65e6ba",
+        "scripts/postinstall.js": "63513eaac15578950530ea95a2e5ad0b4dd061f264d1db2dcc82a33661164f61"
+      }
+    }
+  ]
+}

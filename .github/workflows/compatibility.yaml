@@ -2,6 +2,8 @@ name: Compatibility binaries
 on:
   push:
     branches: [gitar-0.6.11, gitar-rustls-engines]
+  pull_request:
+    branches: [gitar-0.6.11, gitar-rustls-engines]
   workflow_dispatch:
 permissions:
   contents: read
@@ -15,12 +17,15 @@ jobs:
           - target: aarch64-apple-darwin
             runner: namespace-profile-gitar-macos
             features: postgresql,mocking
+            platform: darwin
           - target: x86_64-unknown-linux-gnu
             runner: namespace-profile-gitar
             features: postgresql,mocking
+            platform: linux/amd64
           - target: aarch64-unknown-linux-gnu
             runner: namespace-profile-gitar
             features: postgresql,mocking
+            platform: linux/arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - uses: namespacelabs/nscloud-checkout-action@v8
@@ -60,27 +65,62 @@ jobs:
           zip "prisma-cli-$TARGET.zip" "prisma-cli-$TARGET" source-sha.txt
       - name: Test archive verification
         if: matrix.target == 'aarch64-apple-darwin'
-        run: cargo test --locked -p prisma-client-rust-cli --no-default-features --features postgresql,mocking --lib binaries::tests
-      - name: Test x86 binary on Debian 12 with an empty engine cache
-        if: matrix.target == 'x86_64-unknown-linux-gnu'
+        run: cargo test --locked -p prisma-client-rust-cli --no-default-features --features postgresql,mocking --lib binaries
+      - name: Check runner formatting and lints
+        if: matrix.target == 'aarch64-apple-darwin'
         run: |
-          cp artifacts/prisma-cli-x86_64-unknown-linux-gnu tests/compatibility/prisma
-          docker run --rm -v "$PWD/tests/compatibility:/work" debian:bookworm-slim sh -ec '
-            apt-get update -qq
-            apt-get install -y -qq ca-certificates rustfmt
-            # Fail if the wrapper regresses to invoking OpenSSL for engine selection.
-            printf "#!/bin/sh\nexit 99\n" > /work/openssl
-            chmod +x /work/openssl
-            export PATH=/work:$PATH
-            export DATABASE_URL=postgresql://postgres@localhost:5432/postgres
-            prisma generate --schema /work/schema.prisma
-            test -s /work/prisma.rs
-            prisma --version
-            if prisma generate --schema /work/does-not-exist.prisma; then
-              echo "Invalid Prisma commands must fail"
-              exit 1
-            fi
-          '
+          cargo fmt --check -p prisma-client-rust-cli
+          cargo clippy --locked -p prisma-client-rust-cli -p prisma-cli \
+            --no-default-features --features postgresql,mocking --all-targets
+      - name: Download the previous generator baseline
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          python3 tests/compatibility/baseline.py "$TARGET"
+      - name: Test macOS runner with an empty cache
+        if: matrix.target == 'aarch64-apple-darwin'
+        run: |
+          python3 tests/compatibility/runner.py target/${{ matrix.target }}/release/prisma \
+            --baseline baseline/prisma --work-dir runner-results
+      - uses: docker/setup-qemu-action@v3
+        if: matrix.target == 'aarch64-unknown-linux-gnu'
+        with:
+          platforms: arm64
+      - name: Test Linux runner with disposable PostgreSQL
+        if: matrix.target != 'aarch64-apple-darwin'
+        env:
+          TARGET: ${{ matrix.target }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          docker network create runner-test
+          trap 'docker rm -f runner-db; docker network rm runner-test' EXIT
+          docker run -d --name runner-db --network runner-test --network-alias fixture-db \
+            -e POSTGRES_PASSWORD=fixture -e POSTGRES_DB=runner_fixture postgres:17
+          for attempt in $(seq 1 30); do
+            if docker exec runner-db pg_isready -U postgres; then break; fi
+            sleep 1
+          done
+          docker run --rm --platform "$PLATFORM" --network runner-test \
+            -v "$PWD:/work" -e TARGET="$TARGET" -w /work debian:bookworm-slim sh -ec '
+              apt-get update -qq
+              apt-get install -y -qq ca-certificates openssl rustfmt python3
+              python3 tests/compatibility/runner.py "target/$TARGET/release/prisma" \
+                --baseline baseline/prisma --work-dir runner-results \
+                --database-url postgresql://postgres:fixture@fixture-db:5432/runner_fixture
+            '
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: runner-results-${{ matrix.target }}
+          path: |
+            runner-results/results.json
+            runner-results/*.stdout
+            runner-results/*.stderr
+            runner-results/schema-*/*.stdout
+            runner-results/schema-*/*.stderr
+            runner-results/database/*.stdout
+            runner-results/database/*.stderr
+          retention-days: 7
       - uses: actions/upload-artifact@v4
         with:
           name: prisma-cli-${{ matrix.target }}-${{ github.sha }}
@@ -142,3 +182,17 @@ jobs:
           if grep -E '^(native-tls|openssl|openssl-sys|postgres-native-tls) v' /tmp/quaint-dependencies.txt; then
             exit 1
           fi
+  ci-success:
+    if: always()
+    needs: [build, driver-tests, quaint-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Require every compatibility job
+        env:
+          JOB_RESULTS: ${{ toJson(needs) }}
+        run: |
+          python3 - <<'PYTHON'
+          import json, os
+          results = json.loads(os.environ["JOB_RESULTS"])
+          assert all(job["result"] == "success" for job in results.values()), results
+          PYTHON
