@@ -3,13 +3,11 @@ use std::env;
 use std::process::Command;
 
 pub fn main(args: &[String]) -> Result<i32, String> {
-    let dir = binaries::global_cache_dir();
+    let dir = binaries::global_cache_dir()?;
 
-    binaries::fetch_native(&dir)?;
-
-    let prisma = binaries::prisma_cli_name();
-
-    let mut cmd = Command::new(dir.join(prisma));
+    let runner = binaries::fetch_native(&dir)?;
+    let mut cmd = Command::new(runner.node);
+    cmd.arg(runner.script);
     let binary_name = platform::binary_platform_name()?;
 
     cmd.args(args);
